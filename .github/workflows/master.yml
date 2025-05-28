@@ -23,7 +23,6 @@ jobs:
           pip install -r requirements.txt --index-url=https://dl.cloudsmith.io/${{ secrets.CLOUDSMITH_AUTH_TOKEN }}/${{ secrets.CLOUDSMITH_ORG }}/${{ secrets.CLOUDSMITH_REPO }}/python/simple/
       - name: Create a Python package
         run: |
-          mkdir nyapythonpkg
           cd nyapythonpkg
           pip3 install setuptools
           python setup.py sdist bdist_wheel
