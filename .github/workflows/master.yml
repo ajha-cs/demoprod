@@ -42,4 +42,4 @@ jobs:
 
       - name: Push package to Cloudsmith
         run: |
-          cloudsmith push python ${{ secrets.CLOUDSMITH_ORG }}/${{ secrets.CLOUDSMITH_REPO }} dist/*.tar.gz
+          cloudsmith push python ${{ secrets.CLOUDSMITH_ORG }}/${{ secrets.CLOUDSMITH_REPO }} ./nyapythonpkg/dist/*.tar.gz
