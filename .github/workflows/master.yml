@@ -1,0 +1,46 @@
+name: pushing python pkg 
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:      
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'  
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt --index-url=https://dl.cloudsmith.io/${{ secrets.CLOUDSMITH_AUTH_TOKEN }}/${{ secrets.CLOUDSMITH_ORG }}/${{ secrets.CLOUDSMITH_REPO }}/python/simple/
+      - name: Create a Python package
+        run: |
+          mkdir nyapythonpkg
+          cd nyapythonpkg
+          pip3 install setuptools
+          python setup.py sdist bdist_wheel
+      - name: List package files
+        run: ls -l nyapythonpkg/dist/
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package
+          path: nyapythonpkg/dist/*.tar.gz
+          retention-days: 1
+      - name: Cloudsmith OIDC
+        uses: cloudsmith-io/cloudsmith-cli-action@v1.0.3
+        with:
+            oidc-namespace: ${{ secrets.CLOUDSMITH_ORG }}
+            oidc-service-slug: ${{ secrets.CLOUDSMITH_SERVICE_SLUG }}
+
+      - name: Push package to Cloudsmith
+        run: |
+          cloudsmith push python ${{ secrets.CLOUDSMITH_ORG }}/${{ secrets.CLOUDSMITH_REPO }} dist/*.tar.gz
