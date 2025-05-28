@@ -20,6 +20,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt --index-url=https://dl.cloudsmith.io/${{ secrets.CLOUDSMITH_AUTH_TOKEN }}/${{ secrets.CLOUDSMITH_ORG }}/${{ secrets.CLOUDSMITH_REPO }}/python/simple/
 
       - name: Generate dynamic version
         id: versioning
@@ -33,12 +37,7 @@ jobs:
         run: |
           sed -i "s/version='.*'/version='${{ env.DYNAMIC_VERSION }}'/" nyapythonpkg/setup.py
           cat nyapythonpkg/setup.py  # For debugging
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt --index-url=https://dl.cloudsmith.io/${{ secrets.CLOUDSMITH_AUTH_TOKEN }}/${{ secrets.CLOUDSMITH_ORG }}/${{ secrets.CLOUDSMITH_REPO }}/python/simple/
-
+  
       - name: Create a Python package
         run: |
           cd nyapythonpkg
