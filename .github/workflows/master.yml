@@ -37,8 +37,8 @@ jobs:
       - name: Cloudsmith OIDC
         uses: cloudsmith-io/cloudsmith-cli-action@v1.0.3
         with:
-            oidc-namespace: orgcs
-            oidc-service-slug: pushnpullservice
+            oidc-namespace: ${{ secrets.CLOUDSMITH_ORG }}
+            oidc-service-slug: ${{ secrets.CLOUDSMITH_SERVICE_SLUG }}
 
       - name: Push package to Cloudsmith
         run: |
